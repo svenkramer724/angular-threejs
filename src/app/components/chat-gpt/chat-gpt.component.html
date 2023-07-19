@@ -1,0 +1,891 @@
+<!--  -->
+<div
+  class="flex flex-col items-center justify-between w-full bg-white/70 overflow-hidden h-screen min-h-full max-h-full"
+>
+  <!-- <rubik id="rubik"></rubik> -->
+  <rubik style="position: absolute; top: 60px; right: 10px; z-index: 9999;transition:all ease-in-out 1s;"></rubik>
+  <div
+    id="welcome"
+    [ngClass]="{
+      'space-y-5 md:space-y-16': discussions.length > 0,
+      'space-y-24': discussions.length === 0
+    }"
+    class="w-full min-h-[70%] max-h-[70%] md:h-[80%] md:min-h-[80%] md:max-h-[80%] flex flex-col space-y-16 md:space-y-24 justify-start md:justify-center items-center pb-5 py-5 px-2 md:px-0 relative"
+  >
+    <img
+      id="logo"
+      *ngIf="discussions.length === 0 && !isWritting"
+      src="assets/imgs/logo-h.svg"
+      [ngClass]="{ 'h-10': css }"
+      class="h-12 md:h-auto md:w-1/6 anim"
+      alt="walletGPT"
+    />
+    <app-popover-content
+      (closeModal)="onCloseMenu($event)"
+      *ngIf="showPopover"
+      [show]="showPopover"
+      [data]="[1, 2, 3, 4, 5]"
+    ></app-popover-content>
+    <div
+      #contenuElement
+      id="conteneur"
+      *ngIf="discussions.length > 0"
+      [scrollTop]="contenuElement.scrollHeight"
+      [ngClass]="{
+        'ease-out duration-1000 opacity-100 translate-y-0 sm:scale-100':
+          discussions.length > 0
+      }"
+      class="w-full min-w-full md:w-[60%] md:min-w-[60%] h-[68%] md:h-[60%] lg:h-[500px] xl:h-[550px] justify-center items-center custom-scrollbar overflow-y-auto scroll-smooth ease-in duration-1000 opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95 transform overflow-hidden px-4 pb-2 pt-2 my-0 text-left transition-all sm:my-8 sm:max-w-full sm:p-6"
+    >
+      <div #contenu class="flex flex-col space-y-5 w-full min-w-full">
+        <div
+          class="flex flex-row space-x-4 py-5 w-full min-w-full"
+          *ngFor="let item of discussions"
+        >
+          <img
+            *ngIf="item.role === 'user'"
+            src="assets/imgs/avatar.svg"
+            class="w-10 md:w-12 h-10 md:h-12"
+            alt="avatar"
+          />
+          <img
+            *ngIf="item.role === 'assistant'"
+            src="assets/imgs/w-token.svg"
+            class="w-10 md:w-12 h-10 md:h-12"
+            alt="avatar"
+          />
+          <p
+            *ngIf="item.role === 'user'"
+            class="text-start text-sm md:text-base font-normal text-gray-700"
+          >
+            {{ item.content }}
+          </p>
+          <div *ngIf="item.role === 'assistant'" class="w-full">
+            <p
+              *ngIf="item.role === 'assistant'"
+              [appTypewriter]="item.content"
+              (endWritting)="getBool($event)"
+              class="text-start text-sm md:text-base font-normal text-gray-900"
+            ></p>
+            <br />
+            <dd
+              *ngIf="endWritting"
+              class="w-full justify-end items-end flex flex-row space-x-6"
+            >
+              <dl class="flex flex-row items-center space-x-3">
+                <img src="assets/imgs/robot_walletgpt.svg" alt="" />
+                <a
+                  href="https://dashboard.qryptobank.fi"
+                  class="px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm border border-slate-400 rounded-md text-slate-400 hover:bg-primary hover:text-white"
+                  >Simply do it</a
+                >
+              </dl>
+              <button
+                (click)="togglePopover()"
+                class="px-2 md:px-4 py-2 md:py-3 text-xs md:text-sm border border-slate-400 rounded-md text-slate-400 hover:bg-primary hover:text-white"
+              >
+                Get an expert
+              </button>
+            </dd>
+          </div>
+        </div>
+        <div *ngIf="loader" class="flex flex-row space-x-4 items-center">
+          <img
+            src="assets/imgs/w-token.svg"
+            class="w-10 md:w-12 h-10 md:h-12"
+            alt="avatar"
+          />
+          <span class="h-5 w-3 bg-[#44185B] animate-pulse"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="w-full max-w-5xl relative anim">
+      <form
+        [formGroup]="form"
+        novalidate
+        (ngSubmit)="submit()"
+        class="flex flex-row space-x-1 h-12 rounded-lg w-full border border-primary"
+      >
+        <input
+          id="custom-input"
+          #inPut
+          type="text"
+          (keydown)="getAutoComplete($event)"
+          name="price"
+          formControlName="content"
+          [appTypewriter2]="text"
+          class="block w-full border-0 rounded-l-lg element bg-transparent py-3 px-3 text-primary outline-none placeholder:text-primary placeholder:text-sm placeholder:sm:text-base text-sm sm:text-base sm:leading-6"
+          aria-describedby="price-currency"
+        />
+        <div class="flex items-center pr-3">
+          <div class="flex flex-row space-x-3">
+            <button id ='submit_button'>
+            <svg
+              (click)="submit()"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              class="w-6 h-6 text-[#E72ED4] cursor-pointer"
+            >
+              <path
+                d="M3.478 2.405a.75.75 0 00-.926.94l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.405z"
+              />
+            </svg>
+          </button>
+        </div>
+        </div>
+      </form>
+      <div id="custom-text" (click)="setValue($event)"></div>
+      <ul
+        id="scroll1"
+        [hidden]="autoList.length === 0 || form.invalid"
+        [ngStyle]="{ left: lenght * 10 + 'px' }"
+        class="absolute z-10 -top-[250px] mt-1 max-h-[250px] max-w-[250px] min-w-[200px] overflow-y-auto overflow-x-hidden rounded-md bg-white py-3 px-2 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-xs"
+        id="options"
+        role="listbox"
+      >
+        <li
+          class="relative cursor-default select-none text-center py-2 pl-4 pr-9 text-gray-900 hover:bg-gray-200 hover:scale-125 transition-all ease-out duration-1000"
+          id="option-0"
+          role="option"
+          tabindex="-1"
+          *ngFor="let item of autoList"
+          (click)="changePrompt(item)"
+        >
+          <span class="block">{{ item }}</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <div
+    class="flex flex-col justify-center items-center w-full fixed bottom-0 py-3"
+  >
+    <div
+      class="max-w-7xl flex flex-wrap gap-3 md:flex-row md:space-x-10 xl:space-x-14 md:justify-between justify-center items-center text-center md:items-center text-primary/50 text-sm"
+    >
+      <a
+        class="cursor-pointer hover:text-primary p-2"
+        (click)="showSectionModal('talk')"
+        >They talk about us</a
+      >
+      <!-- <a class="cursor-pointer hover:text-primary" (click)="showSectionModal('use-case')">Use cases</a> -->
+      <button
+        class="cursor-pointer hover:text-primary p-2"
+        (click)="showSectionModal('how-it-work')"
+      >
+        How does it work
+      </button>
+      <button
+        class="hover:text-primary"
+        (click)="showSectionModal('tokenomix')"
+      >
+        Tokenomix
+      </button>
+      <a
+        class="cursor-pointer hover:text-primary"
+        (click)="showSectionModal('roadmap')"
+        >Roadmap</a
+      >
+      <a
+        class="cursor-pointer hover:text-primary"
+        (click)="showSectionModal('statistic')"
+        >Statistics</a
+      >
+      <a
+        class="cursor-pointer hover:text-primary"
+        (click)="showSectionModal('team')"
+        >Team</a
+      >
+      <a
+        class="cursor-pointer hover:text-primary"
+        (click)="showSectionModal('footer')"
+        >Terms and conditions</a
+      >
+      <a class="cursor-pointer hover:text-primary"
+        ><img src="assets/imgs/france-ia.svg" class="h-10" alt="franceIA"
+      /></a>
+    </div>
+  </div>
+  <div
+    *ngIf="section"
+    [ngClass]="{
+      'opacity-100 ease-out duration-1000': section,
+      'opacity-0 ease-in duration-1000': !section
+    }"
+    class="absolute inset-0 flex h-screen w-screen items-center justify-center z-30 bg-black/20 transition-all ease-in-out"
+  >
+    <div
+      [ngClass]="{
+        'opacity-100 ease-in-out duration-1000': section,
+        'opacity-0 ease-in duration-1000': !section
+      }"
+      class="bg-white px-2 md:px-6 py-16 transition-all rounded-lg shadow-lg max-w-7xl max-h-[70%] overflow-auto custom-scrollbar relative"
+    >
+      <!-- <div class="relative flex flex-row"> -->
+      <!-- <span class="fixed right-16  top-5 text-primary animate-bounce text-lg" >Close </span> -->
+      <button
+        (click)="hideModal()"
+        type="button"
+        class="text-primary absolute right-5 top-5"
+      >
+        <span class="sr-only">Close menu</span>
+        <svg
+          class="h-10 w-10 text-primary"
+          fill="currentColor"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
+      <!-- </div> -->
+
+      <div class="mb-4">
+        <!-- Contenu flexible -->
+        <section
+          class="bg-token flex flex-col space-y-14 justify-center items-center w-full bg-no-repeat bg-contain md:bg-cover bg-bottom md:bg-center"
+        >
+          <div
+            class="flex flex-col space-y-10 justify-center items-center w-full max-w-full px-3 md:max-w-7xl"
+          >
+            <div
+              *ngIf="section && section === 'talk'"
+              class="flex flex-col justify-center items-cente max-w-full gsap_reveal gsap_reveal--fromBottom"
+            >
+              <h1 class="text-primary text-xl md:text-2xl text-center">
+                Research to reality. The smart wallet that thinks, anticipates,
+                and operates for you.
+              </h1>
+            </div>
+            <div
+              *ngIf="section && section === 'talk'"
+              class="flex justify-center items-cente max-w-full gsap_reveal gsap_reveal--fromBottom"
+            >
+              <img
+                src="assets/imgs/wallet+gpt.svg"
+                class="w-full"
+                alt="wallet+gpt"
+              />
+            </div>
+            <!-- grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4  w-full gap-8 -->
+            <div
+              *ngIf="section && section === 'talk'"
+              class="navigation-wrapper flex justify-center items-center w-full gsap_reveal gsap_reveal--fromBottom"
+            >
+              <div
+                class="keen-slider w-full bg-primary/50 rounded-lg p-2 justify-center items-center"
+                #sliderRef2
+              >
+                <div class="keen-slider__slide">
+                  <img src="assets/imgs/fastcompany.svg" alt="forbes" />
+                </div>
+                <div class="keen-slider__slide">
+                  <img src="assets/imgs/techcrunch.svg" alt="forbes" />
+                </div>
+                <div class="keen-slider__slide">
+                  <img src="assets/imgs/mit.svg" alt="forbes" />
+                </div>
+                <div class="keen-slider__slide">
+                  <img src="assets/imgs/forbes.svg" alt="forbes" />
+                </div>
+              </div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                (click)="slider2.prev()"
+                class="arrow arrow--left w-12 h-12 text-primary/30"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M15.75 19.5L8.25 12l7.5-7.5"
+                />
+              </svg>
+              <svg
+                *ngIf="slider2"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                (click)="slider2.next()"
+                class="arrow arrow--right w-12 h-12 text-primary/30"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M8.25 4.5l7.5 7.5-7.5 7.5"
+                />
+              </svg>
+            </div>
+
+            <div
+              *ngIf="section && section === 'use-case'"
+              class="navigation-wrapper flex justify-center items-center w-full gsap_reveal gsap_reveal--fromBottom"
+            >
+              <div class="keen-slider w-full relative" #sliderRef>
+                <!-- <app-popover-content [item]="item"></app-popover-content> -->
+                <div class="" *ngFor="let item of usesCases">
+                  <div
+                    (mouseenter)="show()"
+                    (mouseleave)="hides()"
+                    class="keen-slider__slide bg-primary/20 py-2 px-2 rounded-md flex flex-row space-x-4 cursor-pointer"
+                  >
+                    <div
+                      class="flex flex-row justify-start items-start space-x-3"
+                    >
+                      <img src="assets/imgs/shield.svg" class="" />
+                      <div
+                        class="flex flex-col justify-start items-start space-y-1"
+                      >
+                        <span class="text-primary font-normal text-sm">{{
+                          item.title
+                        }}</span>
+                        <p
+                          class="text-primary/50 text-xs font-normal line-clamp-2"
+                        >
+                          {{ item.description }}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- <div class="absolute z-10 -top-[50%] mt-2 w-56 p-4 bg-white shadow-lg rounded-md"
+                                        (mouseenter)="show()" (mouseleave)="hides()">
+                                        <div class="flex flex-row justify-start items-start space-x-3">
+                                            <img src="assets/imgs/shield.svg" class="">
+                                            <div class="flex flex-col justify-start items-start space-y-1">
+                                                <span class="text-primary font-normal text-sm">{{item.title}}</span>
+                                                <p class="text-primary/50 text-xs font-normal">{{item.description}}</p>
+                                            </div>
+                                        </div>
+                                    </div> -->
+                </div>
+              </div>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                (click)="slider.prev()"
+                class="arrow arrow--left w-12 h-12 text-primary/30"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M15.75 19.5L8.25 12l7.5-7.5"
+                />
+              </svg>
+              <svg
+                *ngIf="slider"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                (click)="slider.next()"
+                class="arrow arrow--right w-12 h-12 text-primary/30"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M8.25 4.5l7.5 7.5-7.5 7.5"
+                />
+              </svg>
+            </div>
+          </div>
+          <div
+            *ngIf="section && section === 'how-it-work'"
+            id="how-it-work"
+            class="mb-[20%] flex flex-col space-y-14 justify-center items-center w-full"
+          >
+            <div
+              class="hidden md:flex w-full flex-col justify-center space-y-10 items-center px-6 gsap_reveal gsap_reveal--fromBottom relative"
+            >
+              <div class="flex flex-row justify-between items-center px-10">
+                <img
+                  src="assets/imgs/step-1.svg"
+                  class="w-[40%] transition ease-in-out duration-1000 scale-105 hover:scale-125"
+                  alt="Ask me anything"
+                />
+                <img
+                  src="assets/imgs/union-1.svg"
+                  class="w-[100px]"
+                  alt="arrow"
+                />
+                <img
+                  src="assets/imgs/step-2.svg"
+                  class="w-[40%] transition ease-in-out duration-1000 scale-105 hover:scale-125"
+                  alt="I optimise the best prompt for free"
+                />
+              </div>
+              <img
+                src="assets/imgs/union-3.svg"
+                class="w-10 absolute right-1/3 top-[35%]"
+                alt="Step 3"
+              />
+              <div
+                class="flex flex-row min-w-[90%] justify-center items-center relative"
+              >
+                <img
+                  src="assets/imgs/step-3.svg"
+                  class="w-1/2 transition ease-in-out duration-1000 hover:scale-110"
+                  alt="Step 3"
+                />
+              </div>
+              <div
+                class="flex flex-row min-w-lg justify-between space-x-10 items-start absolute -bottom-0 right-[45%] left-[45%]"
+              >
+                <img src="assets/imgs/union-3.svg" class="w-12" alt="Step 3" />
+                <img src="assets/imgs/union-2.svg" class="w-12" alt="Step 3" />
+              </div>
+              <div
+                class="flex flex-row min-w-[75%] justify-between items-start absolute -bottom-[40%] px-10"
+              >
+                <img
+                  src="assets/imgs/step-robot.svg"
+                  class="w-[40%] transition ease-in-out duration-1000 scale-105 hover:scale-125"
+                  alt="Step 3"
+                />
+                <img
+                  src="assets/imgs/step-expert.svg"
+                  class="w-[40%] transition ease-in-out duration-1000 scale-105 hover:scale-125"
+                  alt="Step 3"
+                />
+              </div>
+            </div>
+            <div
+              class="md:hidden w-full flex-col justify-center space-y-8 items-center px-6 gsap_reveal gsap_reveal--fromBottom relative"
+            >
+              <img
+                src="assets/imgs/step-1.svg"
+                class="w-auto transition ease-in-out duration-1000 scale-105 hover:scale-125"
+                alt="Ask me anything"
+              />
+              <img
+                src="assets/imgs/step-2.svg"
+                class="w-auto transition ease-in-out duration-1000 scale-105 hover:scale-125"
+                alt="I optimise the best prompt for free"
+              />
+              <img
+                src="assets/imgs/step-3.svg"
+                class="w-auto transition ease-in-out duration-1000 hover:scale-110"
+                alt="Step 3"
+              />
+
+              <img
+                src="assets/imgs/step-robot.svg"
+                class="w-auto transition ease-in-out duration-1000 scale-105 hover:scale-125"
+                alt="Step 3"
+              />
+              <img
+                src="assets/imgs/step-expert.svg"
+                class="w-auto transition ease-in-out duration-1000 scale-105 hover:scale-125"
+                alt="Step 3"
+              />
+            </div>
+          </div>
+          <div id="tokenomix" *ngIf="section && section === 'tokenomix'">
+            <div
+              class="w-full flex flex-col justify-center space-y-8 items-center px-6 gsap_reveal gsap_reveal--fromBottom"
+            >
+              <h3
+                class="text-center tracking-[0.25em] uppercase sm:text-xl text-primary text-xl font-light"
+              >
+                <span class="lowercase">w</span>GPT Tokenomix & roadmap
+              </h3>
+              <div
+                class="flex flex-wrap justify-center items-center space-y-4 md:space-y-0 space-x-4 md:space-x-8 max-w-full md:max-w-7xl px-2"
+              >
+                <a
+                  target=""
+                  href="assets/pdfs/Whitepaper_v0.pdf"
+                  download="Whitepaper_v0.pdf"
+                  class="flex flex-row space-x-2 px-6 py-2 border-2 border-primary/50 text-center text-primary/50 text-base hover:text-white hover:bg-primary rounded"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                    class="w-6 h-6"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"
+                    />
+                  </svg>
+                  <span> white paper wGPT </span>
+                </a>
+
+                <button
+                  class="px-6 py-2 border-2 border-primary/50 text-center text-primary/50 text-base hover:text-white hover:bg-primary rounded"
+                >
+                  airdrop wGPT
+                </button>
+                <button
+                  class="px-6 py-2 border-2 border-primary/50 text-center text-primary/50 text-base hover:text-white hover:bg-primary rounded"
+                >
+                  Hybrid bond issue
+                </button>
+              </div>
+            </div>
+            <div
+              class="flex flex-col md:flex-row space-x-0 md:space-x-6 md:space-y-0 space-y-6 justify-between max-w-full md:max-w-7xl px-2 items-center gsap_reveal gsap_reveal--fromBottom"
+            >
+              <div
+                class="flex flex-col justify-center items-center w-full md:w-1/2"
+              >
+                <img src="assets/imgs/token.svg" class="w-11/12" alt="" />
+              </div>
+              <div class="flex flex-col items-center py-6 w-full md:w-1/2">
+                <ul class="flex flex-col space-y-6 justify-center items-center">
+                  <li
+                    class="p-[20px] text-center tracking-[0.2em] uppercase text-primary text-base font-light"
+                  >
+                    4 strong elements of wgpt on white paper
+                  </li>
+                  <li
+                    class="bg-white/50 p-[20px] rounded-md flex flex-row space-x-4 items-center w-full md:w-[80%]"
+                  >
+                    <img src="assets/imgs/leaderboard.svg" class="w-6" />
+                    <span class="text-primary/50 font-normal text-sm"
+                      >You go from generative to performative: that is to say
+                      you go from the theoretical answer to your question to the
+                      realization either by the walletgpt robot or by
+                      appropriate experts</span
+                    >
+                  </li>
+
+                  <li
+                    class="bg-white/50 p-[20px] rounded-md flex flex-row space-x-4 items-center w-full md:w-[80%]"
+                  >
+                    <img src="assets/imgs/graphic-eq.svg" class="w-6" />
+                    <span class="text-primary/50 font-normal text-sm"
+                      >wGPT will increase in value by the growing willingness of
+                      an expert's exposure to the questions being asked</span
+                    >
+                  </li>
+
+                  <li
+                    class="bg-white/50 p-[20px] rounded-md flex flex-row space-x-4 items-center w-full md:w-[80%]"
+                  >
+                    <img src="assets/imgs/insights.svg" class="w-6" />
+                    <span class="text-primary/50 font-normal text-sm"
+                      >You can access many club deals and copy all the
+                      strategies that are eligible for wgpt</span
+                    >
+                  </li>
+
+                  <li
+                    class="bg-white/50 p-[20px] rounded-md flex flex-row space-x-4 items-center w-full md:w-[80%]"
+                  >
+                    <img src="assets/imgs/ar.svg" class="w-6" />
+                    <span class="text-primary/50 font-normal text-sm"
+                      >wGPT gives you access to all the ever-increasing
+                      automatic and personalized sources of income listed on
+                      walletGPT</span
+                    >
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div
+            id="roadmap"
+            *ngIf="section && section === 'roadmap'"
+            class="flex flex-col md:flex-row space-x-0 md:space-x-6 md:space-y-0 space-y-6 justify-between max-w-full md:max-w-7xl px-2 items-center gsap_reveal gsap_reveal--fromBottom"
+          >
+            <app-roadmap class="hidden lg:block"></app-roadmap>
+            <!-- <div class="max-w-full lg:max-w-7xl lg:hidden flex flex-col items-center justify-center"> -->
+            <img
+              src="assets/imgs/roadmap.svg"
+              class="lg:hidden block w-full"
+              alt=""
+            />
+            <!-- </div> -->
+          </div>
+
+          <div
+            id="statistic"
+            *ngIf="section && section === 'statistic'"
+            class="flex flex-col justify-center items-center w-full space-y-12 gsap_reveal gsap_reveal--fromBottom"
+          >
+            <div
+              class="flex flex-wrap sm:divide-x gap-4 sm:gap-0 divide-primary justify-between items-center max-w-full md:max-w-7xl px-2 sm:px-6"
+            >
+              <div class="flex flex-row space-x-1 px-4">
+                <img src="assets/imgs/loader.svg" alt="loader" class="w-auto" />
+                <dl class="flex flex-col">
+                  <dd class="text-xl font-semibold text-primary text-center">
+                    567+
+                  </dd>
+                  <dd class="text-xs font-normal text-primary text-center">
+                    request
+                  </dd>
+                </dl>
+              </div>
+              <div class="flex flex-row space-x-1 px-4">
+                <img
+                  src="assets/imgs/airdrop.svg"
+                  alt="loader"
+                  class="w-auto"
+                />
+                <dl class="flex flex-col justify-start items-start">
+                  <dd class="text-xl font-semibold text-primary text-center">
+                    20k+
+                  </dd>
+                  <dd class="text-xs font-normal text-primary text-center">
+                    airdrop users
+                  </dd>
+                </dl>
+              </div>
+              <div class="flex flex-row space-x-1 px-4">
+                <img
+                  src="assets/imgs/experts.svg"
+                  alt="loader"
+                  class="w-auto"
+                />
+                <dl class="flex flex-col justify-start items-start">
+                  <dd class="text-xl font-semibold text-primary text-center">
+                    100+
+                  </dd>
+                  <dd class="text-xs font-normal text-primary text-center">
+                    experts
+                  </dd>
+                </dl>
+              </div>
+              <div class="flex flex-row space-x-1 px-4">
+                <img src="assets/imgs/ico.svg" alt="loader" class="w-auto" />
+                <dl class="flex flex-col justify-start items-start">
+                  <dd class="text-xl font-semibold text-primary text-center">
+                    100+
+                  </dd>
+                  <dd class="text-xs font-normal text-primary text-center">
+                    Hybrid bond issue reserved
+                  </dd>
+                </dl>
+              </div>
+              <div class="flex flex-row space-x-1 px-4">
+                <img src="assets/imgs/users.svg" alt="loader" class="w-auto" />
+                <dl class="flex flex-col justify-start items-start">
+                  <dd
+                    class="text-xl md:text-2xl font-semibold text-primary text-center"
+                  >
+                    48k
+                  </dd>
+                  <dd class="text-xs font-normal text-primary text-center">
+                    Users wGPT
+                  </dd>
+                </dl>
+              </div>
+              <div
+                class="px-4 text-lg font-light leading-6 text-primary flex flex-row space-x-2 items-center"
+              >
+                <img
+                  src="assets/imgs/trustpilot.svg"
+                  class="h-8"
+                  alt="trustpilot"
+                />
+              </div>
+              <div class="flex flex-row space-x-3 px-4">
+                <img src="assets/imgs/boost.svg" alt="loader" class="w-auto" />
+                <dl class="flex flex-col justify-start items-start">
+                  <dd class="text-xs font-semibold text-primary text-center">
+                    waiting for the first counting
+                  </dd>
+                  <dd class="text-xs font-normal text-primary text-center">
+                    (to be certified by similar web)
+                  </dd>
+                </dl>
+              </div>
+            </div>
+            <div
+              class="flex flex-row justify-center items-center space-y-0 space-x-4 md:space-x-8 max-w-full md:max-w-7xl px-2"
+            >
+              <button
+                class="px-6 py-2 border-2 border-primary/50 text-center text-primary/50 text-base hover:text-white hover:bg-primary rounded"
+              >
+                Investor access
+              </button>
+
+              <button
+                class="px-6 py-2 border-2 border-primary/50 text-center text-primary/50 text-base hover:text-white hover:bg-primary rounded"
+              >
+                wGPT ecosystem
+              </button>
+            </div>
+          </div>
+
+          <div
+            id="team"
+            *ngIf="section && section === 'team'"
+            class="bg-grad mb-10 flex flex-col space-y-4 justify-center items-center w-full bg-calque bg-cover bg-bottom bg-no-repeat"
+          >
+            <div
+              class="w-full flex flex-col justify-center items-center gsap_reveal gsap_reveal--fromBottom"
+            >
+              <h1
+                class="text-center tracking-[0.25em] uppercase sm:text-xl text-primary text-xl font-light"
+              >
+                Funders and team WalletGPT
+              </h1>
+            </div>
+            <div
+              class="flex flex-col items-center py-3 px-5 max-w-[82rem] gsap_reveal gsap_reveal--fromBottom"
+            >
+              <ul class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-8">
+                <li class="flex flex-col justify-center items-center">
+                  <div class="flex flex-col">
+                    <div
+                      class="flex flex-col m-0 p-0 h-[170px] w-[170px] bg-[url('assets/imgs/christophe.svg')] bg-cover bg-no-repeat bg-center justify-center rounded-t items-center"
+                    >
+                      <!-- <img src="assets/imgs/seb.svg" class="rounded-t" alt=""> -->
+                    </div>
+                    <dl
+                      class="flex flex-col text-center px-2 py-4 justify-center items-center bg-primary/20 rounded-b-xl"
+                    >
+                      <dd
+                        class="text-[12px] font-semibold text-primary text-center"
+                      >
+                        Christophe KOURDOULY
+                      </dd>
+                      <dd
+                        class="text-[10px] font-extralight text-primary text-center"
+                      >
+                        CEO
+                      </dd>
+                    </dl>
+                  </div>
+                </li>
+                <li class="flex flex-col justify-center items-center">
+                  <div class="flex flex-col rounded-t">
+                    <div
+                      class="flex flex-col m-0 p-0 h-[170px] w-[170px] bg-[url('assets/imgs/seb.svg')] bg-cover bg-no-repeat bg-center justify-center rounded-t items-center"
+                    >
+                      <!-- <div
+                                                class=" ease-in-out delay-150  flex h-[170px] w-[170px] bg-primary/20 justify-center items-center ">
+                                                <div
+                                                    class=" flex flex-row justify-center items-center divide-x w-full ">
+                                                    <a href="" class="px-2">
+                                                        <img src="assets/imgs/fb.svg" alt="fb"
+                                                            class="w-4 ease-out delay-100 hover:scale-105">
+                                                    </a>
+                                                    <a href="" class="px-2 ">
+                                                        <img src="assets/imgs/lk.svg" alt="fb"
+                                                            class="w-4 ease-out delay-100 hover:scale-105">
+                                                    </a>
+                                                    <a href="" class="px-2">
+                                                        <img src="assets/imgs/tw.svg" alt="fb"
+                                                            class="w-4 ease-out delay-100 hover:scale-105">
+                                                    </a>
+                                                </div>
+                                            </div> -->
+                    </div>
+                    <dl
+                      class="flex flex-col text-center px-2 py-4 justify-center items-center bg-primary/20 rounded-b-xl"
+                    >
+                      <dd
+                        class="text-[12px] font-semibold text-primary text-center"
+                      >
+                        Sebastien JEHAN
+                      </dd>
+                      <dd
+                        class="text-[10px] font-extralight text-primary text-center"
+                      >
+                        CTO
+                      </dd>
+                    </dl>
+                  </div>
+                </li>
+                <li class="flex flex-col justify-center items-center">
+                  <div class="flex flex-col rounded-t">
+                    <div
+                      class="flex flex-col m-0 p-0 h-[170px] w-[170px] bg-[url('assets/imgs/pierre.svg')] bg-cover bg-no-repeat bg-center justify-center rounded-t items-center"
+                    >
+                      <!-- <img src="assets/imgs/seb.svg" class="rounded-t" alt=""> -->
+                    </div>
+                    <dl
+                      class="flex flex-col text-center px-2 py-4 justify-center items-center bg-primary/20 rounded-b-xl"
+                    >
+                      <dd
+                        class="text-[12px] font-semibold text-primary text-center"
+                      >
+                        Pierre NOTTON
+                      </dd>
+                      <dd
+                        class="text-[10px] font-extralight text-primary text-center"
+                      >
+                        COO
+                      </dd>
+                    </dl>
+                  </div>
+                </li>
+                <li class="flex flex-col justify-center items-center">
+                  <div class="flex flex-col rounded-t">
+                    <div
+                      class="flex flex-col m-0 p-0 h-[170px] w-[170px] bg-[url('assets/imgs/thomas.svg')] bg-cover bg-no-repeat bg-center justify-center rounded-t items-center"
+                    ></div>
+                    <dl
+                      class="flex flex-col text-center px-2 py-4 justify-center items-center bg-primary/20 rounded-b-xl"
+                    >
+                      <dd
+                        class="text-[12px] font-semibold text-primary text-center"
+                      >
+                        Thomas FAURE ROMANELLI
+                      </dd>
+                      <dd
+                        class="text-[10px] font-extralight text-primary text-center"
+                      >
+                        CFO
+                      </dd>
+                    </dl>
+                  </div>
+                </li>
+
+                <li class="flex flex-col justify-center items-center">
+                  <div class="flex flex-col rounded-t">
+                    <div
+                      class="flex flex-col h-[170px] w-[170px] bg-[url('assets/imgs/robot.svg')] bg-no-repeat bg-center bg-primary rounded-t justify-center items-center"
+                    ></div>
+                    <dl
+                      class="flex flex-col text-center px-2 py-4 justify-center items-center bg-primary/20 rounded-b-xl"
+                    >
+                      <dd
+                        class="text-[12px] font-semibold text-primary text-center"
+                      >
+                        GPT
+                      </dd>
+                      <dd
+                        class="text-[10px] font-extralight text-primary text-center"
+                      >
+                        WalletGPT
+                      </dd>
+                    </dl>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <app-footer
+            id="footer"
+            *ngIf="section && section === 'footer'"
+          ></app-footer>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>

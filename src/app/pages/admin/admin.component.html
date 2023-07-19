@@ -1,0 +1,76 @@
+<div class="admin">
+  <h1>Welcome to Admin Page!</h1>
+  <div class="admin-x">
+    <div id="admin-x__input" class="header">
+      <h2>Add X Direction</h2>
+      <input
+        #inPut
+        type="text"
+        id="xInput"
+        placeholder="Title..."
+        (change)="setValuex($event)"
+        style="color: black"
+      />
+      <span (click)="newElementx()" class="addBtn">Add</span>
+    </div>
+    <ul id="admin-x__UL">
+    </ul>
+    <div class="admin-y">
+      <div id="admin-y__input" class="header">
+        <h2>Add Y Direction</h2>
+        <input
+          #inPut
+          type="text"
+          id="yInput"
+          placeholder="Title..."
+          (change)="setValuey($event)"
+          style="color: black"
+        />
+        <span (click)="newElementy()" class="addBtn">Add</span>
+      </div>
+    <ul id="admin-y__UL">
+    </ul>
+      <div class="admin-z">
+        <div id="admin-z__input" class="header">
+          <h2>Add Z Direction</h2>
+          <input
+            #inPut
+            type="text"
+            id="zInput"
+            placeholder="Title..."
+            (change)="setValuez($event)"
+            style="color: black"
+          />
+          <span (click)="newElementz()" class="addBtn">Add</span>
+        </div>
+      
+    <ul id="admin-z__UL">
+    </ul>
+
+    <a href="/" class="addBtn">GO TO HOMEPAGE</a>
+  </div>
+  <!-- <div class="admin-y">
+    <div id="admin-y__input" class="header">
+      <h2>Add Y Direction</h2>
+      <input
+        #inPut
+        type="text"
+        id="yInput"
+        placeholder="Title..."
+        (keydown)="getAutoComplete($event)"
+      />
+      <span onclick="newElement()" class="addBtn">Add</span>
+    </div>
+
+    <ul id="admin-y__ul"></ul>
+  </div>
+  <div class="admin-z">
+    <div id="admin-z__input" class="header">
+      <h2>Add Z Direction</h2>
+      <input type="text" id="zInput" placeholder="Title..." />
+      <span onclick="newElement()" class="addBtn">Add</span>
+    </div>
+
+    <ul id="admin-z__ul"></ul> -->
+  <!-- </div> -->
+</div>

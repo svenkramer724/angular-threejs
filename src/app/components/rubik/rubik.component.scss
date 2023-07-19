@@ -1,0 +1,38 @@
+.rubik {
+  width: 200px;
+  height: 200px;
+  margin: 0;
+  overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.7);
+  font-family: "Alegreya Sans SC";
+  transition: all cubic-bezier(0.39, 0.575, 0.565, 1) 0.5s;
+  color: #eee;
+  &-scene {
+    height: 100%;
+  }
+  &-layerBtn {
+    position: absolute;
+    left: 100%;
+    top: 100%;
+    &__hide {
+      padding: 10px;
+      background-color: rgba(255, 255, 255, 0.7);
+      color: white;
+      font-size: 1rem;
+      border-radius: 10px 10px 0px 0px;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      user-select: none;
+      cursor: pointer;
+    }
+    &__show {
+      padding: 10px;
+      background-color: rgba(0, 0, 0, 0.8);
+      color: white;
+      font-size: 1rem;
+      border-radius: 0px 0px 10px 10px;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      user-select: none;
+      cursor: pointer;
+    }
+  }
+}

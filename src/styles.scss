@@ -1,0 +1,31 @@
+/* You can add global styles to this file, and also import other style files */
+@use "tailwindcss/base";
+@use "tailwindcss/components";
+@use "tailwindcss/utilities";
+@import '@angular/cdk/overlay-prebuilt.css';
+
+/* Owl Caroucel */
+@import '../node_modules/ngx-owl-carousel-o/lib/styles/scss/owl.carousel';
+@import '../node_modules/ngx-owl-carousel-o/lib/styles/scss/owl.theme.default';
+
+@import url("https://fonts.googleapis.com/css?family=Outfit:400,500,600,700,800,900");
+@import url("https://fonts.googleapis.com/css?family=Product+Sans:200,300,400,500,600,700,800,900");
+@import "../node_modules/keen-slider/keen-slider.min.css";
+.bg-g{
+  color: radial-gradient(50% 50% at 50% 50%, #BF04BB 0%, #1D1F3D 100%);
+}
+// @font-face {
+//   font-family: 'Product Sans';
+//   font-style: normal;
+//   // font-weight: 400;
+//   // src: local('Open Sans'), local('OpenSans'), url(https://fonts.gstatic.com/s/productsans/v5/HYvgU2fE2nRJvZ5JFAumwegdm0LZdjqr5-oayXSOefg.woff2) format('woff2');
+// }
+
+html,
+body {
+  font-family: "Product Sans", sans-serif;
+}
+
+.no-scroll {
+  overflow: hidden !important;
+}

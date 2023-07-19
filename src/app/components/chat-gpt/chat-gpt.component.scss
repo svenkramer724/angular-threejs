@@ -1,0 +1,274 @@
+@keyframes pulse {
+  50% {
+      opacity: .5;
+  }
+}
+.animate-pulse {
+  animation: pulse 0.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+#scroll1{
+  background: rebeccapurple;
+  perspective: 150px !important;
+}
+
+
+///////////////////////
+/* CSS */
+.fixed {
+  position: fixed;
+}
+
+.inset-0 {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.flex {
+  display: flex;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.z-50 {
+  z-index: 50;
+}
+
+.bg-white {
+  background-color: #fff;
+}
+
+.p-6 {
+  padding: 1.5rem;
+}
+
+.rounded-lg {
+  border-radius: 0.5rem;
+}
+
+.shadow-lg {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
+.flex {
+  display: flex;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.bg-gray-300 {
+  background-color: #e2e8f0;
+}
+
+.rounded-lg {
+  border-radius: 0.5rem;
+}
+
+.text-gray-700 {
+  color: #4a5568;
+}
+
+.mr-2 {
+  margin-right: 0.5rem;
+}
+
+.bg-blue-500 {
+  background-color: #3b82f6;
+}
+
+.text-white {
+  color: #fff;
+}
+
+// Scroll bar
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  background-color: #6D278E50;
+  scroll-behavior: smooth !important;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #6D278E;
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #6D278E90;
+}
+//////
+/// slider
+.navigation-wrapper {
+  position: relative !important;
+}
+
+.keen-slider:not([data-keen-slider-disabled]) {
+  z-index: 1 !important;
+  -webkit-touch-callout: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+  // align-content: flex-start;
+  display: flex !important;
+  position: relative !important;
+  touch-action: pan-y !important;
+  -webkit-user-select: none !important;
+  user-select: none !important;
+  -khtml-user-select: none !important;
+  width: 100% !important;
+}
+
+.arrow {
+  position: absolute !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  -webkit-transform: translateY(-50%) !important;
+  cursor: pointer !important;
+}
+
+.arrow--left {
+  z-index: 1000 !important;
+  left: -5% !important;
+}
+
+.arrow--right {
+  z-index: 1000 !important;
+  right: -5% !important;
+}
+///////////////////
+
+.select-wrap {
+  position: relative;
+  /* top: 200px;*/
+  height: 100%;
+  /*  perspective: 1200px;*/
+  text-align: center;
+  overflow: hidden;
+  font-size: 20px;
+  color: #ddd;
+
+  &:before,
+  &:after {
+    position: absolute;
+    z-index: 1;
+    display: block;
+    content: '';
+    width: 100%;
+    height: 50%;
+  }
+
+  /* &:before {
+    top: 0;
+    background-image: linear-gradient(to bottom, rgba(1, 1, 1, 0.5), rgba(1, 1, 1, 0));
+  }
+
+  &:after {
+    bottom: 0;
+    background-image: linear-gradient(to top, rgba(1, 1, 1, 0.5), rgba(1, 1, 1, 0));
+  } */
+
+  .select-options {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: 0;
+    transform-style: preserve-3d;
+    margin: 0 auto;
+    display: block;
+    transform: translateZ(-150px) rotateX(0deg);
+    -webkit-font-smoothing: subpixel-antialiased;
+    color: #666;
+
+    .select-option {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 50px;
+      -webkit-font-smoothing: subpixel-antialiased;
+
+      @for $i from 1 through 100 {
+        &:nth-child(#{$i}) {
+          transform: rotateX(-18deg * ($i - 1)) translateZ(250px);
+        }
+      }
+    }
+  }
+}
+
+.highlight {
+  position: absolute;
+  top: 50%;
+  transform: translate(0, -50%);
+  width: 100%;
+  background-color: #000;
+  border-top: 1px solid #333;
+  border-bottom: 1px solid #333;
+  font-size: 24px;
+  overflow: hidden;
+}
+
+.highlight-list {
+  /* display: none;*/
+  position: absolute;
+  width: 100%;
+}
+
+
+/* date */
+.date-selector {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  perspective: 2000px;
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+
+  width: 200px;
+  height: 300px;
+
+  >div {
+    flex: 1;
+  }
+
+  .select-wrap {
+    font-size: 15px;
+  }
+
+  .highlight {
+    font-size: 30px;
+  }
+}
